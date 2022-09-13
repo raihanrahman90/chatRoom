@@ -6,11 +6,13 @@ import {HubConnectionBuilder, LogLevel} from '@microsoft/signalr';
 import React, {Component, useState} from 'react';
 import Counter from './Organism/Counter';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { setUsername } from './Redux/Function/UsernameSlicer';
 function App() {
   const [connection, setConnection] = useState();
   const [messages, setMessage] = useState([]);
+  const [username, setUsername] = useState('');
   const [users, setUsers] = useState([]);
-  const joinRoom = async (user)=>{
+  const joinRoom = async (username)=>{
     try{
       
       const connection = new HubConnectionBuilder()
@@ -18,6 +20,10 @@ function App() {
                               .configureLogging(LogLevel.Information)
                               .build();
       connection.on("ReceiveMessage",(user,message)=>{
+        console.log("ini isi dari user");
+        console.log(user);
+        console.log("ini isi dari message");
+        console.log(message);
         setMessage(messages=>[...messages, {user, message}]);
       });
 
@@ -32,16 +38,18 @@ function App() {
       });
 
       await connection.start();
-      await connection.invoke("JoinRoom", {user});
+      await connection.invoke("JoinRoom", {username});
       setConnection(connection);
-
+      setUsername(username);
     } catch (e){
       console.log(e);
     }
   }
-  const sendMessage = async (message) => {
+  const sendMessage = async (to,message) => {
+    var from = username;
+    var body = message;
     try {
-      await connection.invoke("SendMessage", message);
+      await connection.invoke("SendMessage", {from, to, body});
     } catch (e) {
       console.log(e);
     }

@@ -5,6 +5,10 @@ const MessageContainer = ({ messages, username }) => {
     const messageRef = useRef();
 
     useEffect(() => {
+        console.log("isi dari message");
+        console.log(messages);
+        console.log("isi dari username");
+        console.log(username);
         if (messageRef && messageRef.current) {
             const { scrollHeight, clientHeight } = messageRef.current;
             messageRef.current.scrollTo({ left: 0, top: scrollHeight - clientHeight, behavior: 'smooth' });
